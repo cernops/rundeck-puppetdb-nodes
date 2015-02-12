@@ -6,7 +6,7 @@ Description
 This is a Resource Model Source plugin for [RunDeck][] 2.X+ that retrieves node definitions
 from PuppetDB. 
 
-Developed in Python, it uses [python-requests][] and Kerberos authentication to connect to the PuppetDB API.
+Developed in Python, it uses [python-requests][] library and Kerberos authentication to connect to the PuppetDB API.
 
 [RunDeck]: http://rundeck.org
 [python-requests]: http://docs.python-requests.org/en/latest/
@@ -15,13 +15,13 @@ Either the puppetdb API url, the foreman hostgroup, username, and the kerberos k
 
 Parameters
 ----------
-`PuppetDB` - PuppetDB API URL followinf this format `https://<SERVER>:<PORT>/<API VERSION>` 
+`PuppetDB` - PuppetDB API URL following this format: `https://<SERVER>:<PORT>/<API VERSION>` 
 
  > `https://my.puppet.db:2525/v3`
 
 `Foreman Hostgroup` - Specify a Foreman hosgroup to filter the query
 
- > `cloud_workflows` `cloud_`
+ > `cloud_workflows` or `cloud_`
 
 `Kerberos user` - User to connect to PuppetDB
 
