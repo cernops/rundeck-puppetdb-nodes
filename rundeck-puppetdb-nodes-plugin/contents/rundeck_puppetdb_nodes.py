@@ -8,8 +8,6 @@ import requests
 import subprocess
 import logging
 
-NODES_YAML_PATH = '/etc/rundeck/scripts/nodes_test.yaml'
-
 def negociateKRBticket(keytab, username):
     kinit = '/usr/bin/kinit'
     kinit_args = [kinit, '-kt', keytab, username]
@@ -33,6 +31,9 @@ def getFactPuppetDB(apiurl, factname, hostgroup):
     return None
 
 def printNodesList(apiurl, hostgroup):
+    '''
+    Prints the nodes information in a supported format for Rundeck.
+    '''
     operatingsystemfacts = getFactPuppetDB(apiurl, "operatingsystem", hostgroup)
     hostgroupfacts = getFactPuppetDB(apiurl, "hostgroup", hostgroup)
     if not (operatingsystemfacts == None or hostgroupfacts == None):
@@ -50,11 +51,14 @@ def printNodesList(apiurl, hostgroup):
         logging.error("Fact list empty. Check PuppetDB connection params")
 
 def storeNodesList(apiurl, hostgroup, path):
+    '''
+    Saves the node list in a local file so rundeck can access it localy.
+    '''
     operatingsystemfacts = getFactPuppetDB(apiurl, "operatingsystem", hostgroup)
     hostgroupfacts = getFactPuppetDB(apiurl, "hostgroup", hostgroup)
     logging.info("Saving node list in '%s'..." % path)
     if not (operatingsystemfacts == None or hostgroupfacts == None):
-        with open(NODES_YAML_PATH, 'w') as file:
+        with open("%s/nodes.yaml" % path, 'w') as file:
             for operatingsystem in operatingsystemfacts:
                 global counter
                 counter = counter + 1
@@ -72,7 +76,7 @@ def storeNodesList(apiurl, hostgroup, path):
 
 def puppetdb_nodes_main(apiurl, hostgroup, keytab, username):
     negociateKRBticket(keytab, username)
-    #storeNodesList(apiurl, hostgroup)
+    #storeNodesList(apiurl, hostgroup, path)
     printNodesList(apiurl, hostgroup)
     destroyKRBticket()
 
@@ -84,6 +88,7 @@ def main():
     parser.add_argument("--hostgroup", help="Foreman hostgroup", required=True)
     parser.add_argument("--keytab", help="Keytab", required=True)
     parser.add_argument("--username", help="Username to connect to PuppetDB", required=True)
+    parser.add_argument("--path", help="Path where the node list will be stored", nargs='?')
 
     args = parser.parse_args()
 
