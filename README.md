@@ -3,7 +3,7 @@ Rundeck PuppetDB Nodes Plugin
 
 Description
 -----------
-This is a Resource Model Source plugin for [RunDeck][] 2.X+ that retrieves node definitions
+This is a Resource Model Source plugin for [Rundeck][] Rundeck version 2.0 (or higher) that retrieves node definitions
 from PuppetDB. 
 
 Developed in Python, it uses [python-requests][] library and Kerberos authentication to connect to the PuppetDB API.
@@ -37,23 +37,13 @@ Requirements
 
 Installation
 ------------
-Just copy the [.ZIP](./rundeck-puppetdb-nodes-plugin.zip) to `/var/lib/rundeck/libext/` and restart the Rundeck service.
+Download the latest .ZIP from the [releases page](https://github.com/cernops/rundeck-puppetdb-nodes/releases) and copy it to `/var/lib/rundeck/libext/`. Restart the Rundeck service to be sure it gets the lastest changes.
 
 Next time you log in, you will see a new Resource Model Source called **PuppetDB Source** on the project's configuration page.
 
 Plugin Output example
 ---------------------
 ```
-loadbalancer-03.mydomain.com:
-    hostname: loadbalancer-03.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/ha
-    osName: SLC
-scheduler-03.mydomain.com:
-    hostname: scheduler-03.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/scheduler/server
-    osName: SLC
 scheduler-02.mydomain.com:
     hostname: scheduler-02.mydomain.com
     username: root
@@ -69,11 +59,6 @@ loadbalancer-01.mydomain.com:
     username: root
     tags:  hostgroup=workflows/ha
     osName: SLC
-server-03.mydomain.com:
-    hostname: server-03.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/server/production
-    osName: SLC
 server-02.mydomain.com:
     hostname: server-02.mydomain.com
     username: root
@@ -83,11 +68,6 @@ loadbalancer-02.mydomain.com:
     hostname: loadbalancer-02.mydomain.com
     username: root
     tags:  hostgroup=workflows/ha
-    osName: SLC
-server-01.mydomain.com:
-    hostname: server-01.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/server/production
     osName: SLC
 server-qa-01.mydomain.com:
     hostname: server-qa-01.mydomain.com
