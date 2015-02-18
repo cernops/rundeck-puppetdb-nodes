@@ -14,7 +14,7 @@ providers:
           plugin-type: script
           script-interpreter: /usr/bin/python
           script-file: rundeck_puppetdb_nodes.py
-          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab}"
+          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab} --factlist ${config.factlist}"
           config:
                 - name: apiurl
                   type: String
