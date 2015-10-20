@@ -1,10 +1,10 @@
 #yaml plugin metadata
 
 name: PuppetDB source
-version: 1.0
+version: 1.1
 rundeckPluginVersion: 1.0
 author: Daniel Fernandez (danielfr@cern.ch)
-date: 2015/02/12
+date: 2015/10/20
 providers:
         - name: rundeck-puppetdb-nodes
           service: ResourceModelSource
@@ -39,6 +39,6 @@ providers:
                 - name: factlist
                   type: String
                   title: Fact list
-                  description: "List of facts to retrieve for every node"
-                  required: true
+                  description: "Space-separated list of facts to retrieve for every node"
+                  required: false
                   default: "is_virtual"
