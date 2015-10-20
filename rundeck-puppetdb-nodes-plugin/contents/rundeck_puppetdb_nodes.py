@@ -51,7 +51,8 @@ def printNodesList(apiurl, hostgroup, factlist):
             print (" "*4 + "hostname: " + node)
             print (" "*4 + "username: root")
             for fact in facts:
-                print (" "*4 + fact + ": " + data[node][fact] )
+                if data[node].has_key(fact):
+                    print (" "*4 + fact + ": " + data[node][fact] )
         logging.info("Node list printed successfully")
     else:
         logging.error("Fact list empty. Check PuppetDB connection params")
