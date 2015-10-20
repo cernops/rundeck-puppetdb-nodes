@@ -4,7 +4,7 @@ name: PuppetDB source
 version: 1.1
 rundeckPluginVersion: 1.0
 author: Daniel Fernandez (danielfr@cern.ch)
-date: 2015/10/20
+date: 2015/10/21
 providers:
         - name: rundeck-puppetdb-nodes
           service: ResourceModelSource
@@ -14,12 +14,13 @@ providers:
           plugin-type: script
           script-interpreter: /usr/bin/python
           script-file: rundeck_puppetdb_nodes.py
-          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab} --factlist ${config.factlist}"
+          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab} --file ${config.file} --${config.mode} --factlist ${config.factlist}"
           config:
                 - name: apiurl
                   type: String
                   title: PuppetDB
-                  description: "PuppetDB API URL (https://<SERVER>:<PORT>/<API VERSION>). Ex: https://my.puppet.db:2525/v3"
+                  description: "PuppetDB API URL. Ex: https://my.puppet.db:2525/v3"
+                  default: "https://judy.cern.ch:9081/v3"
                   required: true
                 - name: hostgroup
                   type: String
@@ -40,5 +41,17 @@ providers:
                   type: String
                   title: Fact list
                   description: "Space-separated list of facts to retrieve for every node"
+                  default: "hostname ipaddress"
                   required: false
-                  default: "is_virtual"
+                - name: mode
+                  type: Select
+                  title: Mode
+                  description: "Prints out/stores on file the list of nodes"
+                  default: print
+                  values: print,store
+                  required: true
+                - name: file
+                  type: String
+                  title: "Output file"
+                  description: "Save list of nodes to file (only if 'store' mode selected)"
+                  default: "/var/rundeck/projects/${project.name}/etc/resources.yaml"
