@@ -38,7 +38,7 @@ def printNodesList(apiurl, hostgroup, factlist):
     Prints the nodes information in a supported format for Rundeck.
     '''
     facts = factlist.replace(',','').split()
-    facts.extend(["operatingsystem", "hostgroup"])
+    facts.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
     raw_data = getFactsPuppetDB(apiurl, facts, hostgroup)
     data = defaultdict(lambda: {})
     if raw_data != None:
