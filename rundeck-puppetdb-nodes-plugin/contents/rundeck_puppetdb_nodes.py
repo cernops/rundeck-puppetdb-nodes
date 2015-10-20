@@ -75,7 +75,7 @@ def storeNodesList(apiurl, hostgroup, path):
                 file.write(" "*4+"tags: ")
                 for hostgroup in hostgroupfacts:
                     if (operatingsystem['certname'] == hostgroup['certname']):
-		                file.write (" hostgroup="+ hostgroup['value']+"\n")
+                        file.write(" hostgroup="+ hostgroup['value']+"\n")
                 file.write (" "*4+"osName: "+ operatingsystem['value']+"\n")
         logging.info("Node list saved successfully")
     else:
