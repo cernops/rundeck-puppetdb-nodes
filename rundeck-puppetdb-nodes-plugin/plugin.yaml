@@ -41,4 +41,4 @@ providers:
                   title: Fact list
                   description: "List of facts to retrieve for every node"
                   required: true
-                  default: "is_virtuals"
+                  default: "is_virtual"
