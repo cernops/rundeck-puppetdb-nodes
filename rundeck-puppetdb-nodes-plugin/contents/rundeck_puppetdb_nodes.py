@@ -7,6 +7,7 @@ import json
 import requests
 import subprocess
 import logging
+from collections import defaultdict
 
 def negociateKRBticket(keytab, username):
     kinit = '/usr/bin/kinit'
@@ -17,12 +18,14 @@ def negociateKRBticket(keytab, username):
 def destroyKRBticket():
     subprocess.call(["kdestroy"])
 
-def getFactPuppetDB(apiurl, factname, hostgroup):
-    url ='%s/facts/%s' % (apiurl, factname)
-    query = '["in", "certname", ["extract", "certname", ["select-facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]' % hostgroup
+def getFactsPuppetDB(apiurl, facts, hostgroup):
+    url ='%s/facts' % apiurl
+    query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select-facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
+    query_facts = ','.join(['["=","name","%s"]' % fact for fact in facts])
+    query = query_base % (query_facts, hostgroup)
     headers = {'Content-Type': 'application/json','Accept': 'application/json, version=2'}
     payload = {'query': query}
-    logging.info("Getting '%s' from '%s', query: '%s'" % (factname, url, query))
+    logging.info("Getting facts from '%s', query: '%s'" % (url, query))
     r = requests.get(url, params=payload, headers=headers, verify=False, auth=HTTPKerberosAuth())
     if r.status_code == requests.codes.ok:
         logging.info("Request code: '%s'" % r.status_code)
@@ -30,22 +33,26 @@ def getFactPuppetDB(apiurl, factname, hostgroup):
     logging.error("The request failed with code '%s'" % r.status_code)
     return None
 
-def printNodesList(apiurl, hostgroup):
+def printNodesList(apiurl, hostgroup, factlist):
     '''
     Prints the nodes information in a supported format for Rundeck.
     '''
-    operatingsystemfacts = getFactPuppetDB(apiurl, "operatingsystem", hostgroup)
-    hostgroupfacts = getFactPuppetDB(apiurl, "hostgroup", hostgroup)
-    if not (operatingsystemfacts == None or hostgroupfacts == None):
+    facts = factlist.replace(',','').split()
+    facts.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
+    raw_data = getFactsPuppetDB(apiurl, facts, hostgroup)
+    data = defaultdict(lambda: {})
+    if raw_data != None:
+        for entry in raw_data:
+            data[entry['certname']] = dict(data[entry['certname']].items() + [(entry['name'], entry['value'])])
+
         logging.info("Printing node list using standard output...")
-        for operatingsystem in operatingsystemfacts:
-            print (operatingsystem['certname'] + ':')
-            print (" "*4+"hostname: "+ operatingsystem['certname'])
-            print (" "*4+"username: root")
-            for hostgroup in hostgroupfacts:
-                if (operatingsystem['certname'] == hostgroup['certname']):
-                    print (" "*4+"tags:  hostgroup="+ hostgroup['value'])
-            print (" "*4+"osName: "+ operatingsystem['value'])
+        for node in data.keys():
+            print ('%s:'%node)
+            print (" "*4 + "hostname: " + node)
+            print (" "*4 + "username: root")
+            for fact in facts:
+                if data[node].has_key(fact):
+                    print (" "*4 + fact + ": " + data[node][fact] )
         logging.info("Node list printed successfully")
     else:
         logging.error("Fact list empty. Check PuppetDB connection params")
@@ -68,16 +75,16 @@ def storeNodesList(apiurl, hostgroup, path):
                 file.write(" "*4+"tags: ")
                 for hostgroup in hostgroupfacts:
                     if (operatingsystem['certname'] == hostgroup['certname']):
-		                file.write (" hostgroup="+ hostgroup['value']+"\n")
+                        file.write(" hostgroup="+ hostgroup['value']+"\n")
                 file.write (" "*4+"osName: "+ operatingsystem['value']+"\n")
         logging.info("Node list saved successfully")
     else:
         logging.error("Fact list empty. Check PuppetDB connection params")
 
-def puppetdb_nodes_main(apiurl, hostgroup, keytab, username):
+def puppetdb_nodes_main(apiurl, hostgroup, keytab, username, factlist):
     negociateKRBticket(keytab, username)
     #storeNodesList(apiurl, hostgroup, path)
-    printNodesList(apiurl, hostgroup)
+    printNodesList(apiurl, hostgroup, factlist)
     destroyKRBticket()
 
 def main():
@@ -88,6 +95,7 @@ def main():
     parser.add_argument("--hostgroup", help="Foreman hostgroup", required=True)
     parser.add_argument("--keytab", help="Keytab", required=True)
     parser.add_argument("--username", help="Username to connect to PuppetDB", required=True)
+    parser.add_argument("--factlist", help="List of facts to retrieve for every node", required=True)
     parser.add_argument("--path", help="Path where the node list will be stored", nargs='?')
 
     args = parser.parse_args()
@@ -97,7 +105,7 @@ def main():
     elif args.debug:
         logging.basicConfig(level=logging.DEBUG)
 
-    puppetdb_nodes_main(args.apiurl, args.hostgroup, args.keytab, args.username)
+    puppetdb_nodes_main(args.apiurl, args.hostgroup, args.keytab, args.username, args.factlist)
 
 if __name__ == "__main__":
     main()

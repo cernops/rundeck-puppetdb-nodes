@@ -14,7 +14,7 @@ providers:
           plugin-type: script
           script-interpreter: /usr/bin/python
           script-file: rundeck_puppetdb_nodes.py
-          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab}"
+          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab} --factlist ${config.factlist}"
           config:
                 - name: apiurl
                   type: String
@@ -23,16 +23,22 @@ providers:
                   required: true
                 - name: hostgroup
                   type: String
-                  title: hostgroup
+                  title: Hostgroup
                   description: "Foreman Hostgroup"
                   required: true
                 - name: username
                   type: String
-                  title: username
+                  title: Username
                   description: "User to connect to PuppetDB"
                   required: true
                 - name: keytab
                   type: String
-                  title: keytab
+                  title: Keytab
                   description: "Path to user's keytab to authenticate"
                   required: true
+                - name: factlist
+                  type: String
+                  title: Fact list
+                  description: "List of facts to retrieve for every node"
+                  required: true
+                  default: "is_virtual"
