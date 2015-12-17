@@ -1,0 +1,44 @@
+#yaml plugin metadata
+
+name: PuppetDB source
+version: 1.0
+rundeckPluginVersion: 1.0
+author: Daniel Fernandez (danielfr@cern.ch)
+date: 2015/02/12
+providers:
+        - name: rundeck-puppetdb-nodes
+          service: ResourceModelSource
+          title: PuppetDB source
+          description: Queries PuppetDB to retrieve node definitions from a specific Foreman hostgroup
+          resource-format: resourceyaml
+          plugin-type: script
+          script-interpreter: /usr/bin/python
+          script-file: rundeck_puppetdb_nodes.py
+          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab} --factlist ${config.factlist}"
+          config:
+                - name: apiurl
+                  type: String
+                  title: PuppetDB
+                  description: "PuppetDB API URL (https://<SERVER>:<PORT>/<API VERSION>). Ex: https://my.puppet.db:2525/v3"
+                  required: true
+                - name: hostgroup
+                  type: String
+                  title: Hostgroup
+                  description: "Foreman Hostgroup"
+                  required: true
+                - name: username
+                  type: String
+                  title: Username
+                  description: "User to connect to PuppetDB"
+                  required: true
+                - name: keytab
+                  type: String
+                  title: Keytab
+                  description: "Path to user's keytab to authenticate"
+                  required: true
+                - name: factlist
+                  type: String
+                  title: Fact list
+                  description: "List of facts to retrieve for every node"
+                  required: true
+                  default: "is_virtual"
