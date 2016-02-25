@@ -21,19 +21,24 @@ Parameters
 
 `Foreman Hostgroup` - Specify a Foreman hosgroup to filter the query
 
- > `cloud_workflows` or `cloud_`
+ > `cloud_workflow` or `cloud_`
 
 `Kerberos user` - User to connect to PuppetDB
 
 `Kerberos keytab` - Path to user's keytab to authenticate
 
-![alt tag](images/config.png)
+`Factlist` - Space-separated list of facts to retrieve for every node
+
+`Mode` - Prints out/stores on file the list of nodes. Select store if you want to cache the result.
+
+`Output file` - Save list of nodes to file (only if 'store' mode selected)
+
 
 Requirements
 ------------
 * The plugin requires Rundeck version 2.0 or higher.
-* python-requests v1.1.0-4
-* python-requests-kerberos v0.5 ([important!!](https://bugzilla.redhat.com/show_bug.cgi?id=1169296))
+* python-requests v1.1.0-4 or higher
+* python-requests-kerberos v0.5 ([important!!](https://bugzilla.redhat.com/show_bug.cgi?id=1169296)) or higher
 
 Installation
 ------------

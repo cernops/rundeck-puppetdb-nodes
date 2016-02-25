@@ -54,7 +54,6 @@ class PuppetDBNodes(object):
         Queries PuppetDB and prints out the nodes information in a supported format for Rundeck
 .
         '''
-        logging.info(type(factlist))
         factlist.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
         raw_data = self.get_facts_puppetdb(apiurl, factlist, hostgroup)
         data = defaultdict(lambda: {})
