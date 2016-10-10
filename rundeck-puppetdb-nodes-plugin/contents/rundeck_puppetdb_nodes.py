@@ -18,15 +18,15 @@ class PuppetDBNodes(object):
             setattr(self, k, v)
 
 
-    def negociate_krb_ticket(self, keytab_path, username):
+    def negociate_krb_ticket(self, keytab_path, krb_principal):
         kinit = '/usr/bin/kinit'
-        kinit_args = [kinit, '-kt', keytab_path, username]
+        kinit_args = [kinit, '-kt', keytab_path, krb_principal]
         kinit = subprocess.Popen(kinit_args)
         kinit.wait()
 
 
     def destroy_krb_ticket(self):
-        subprocess.call(["kdestroy"])
+        subprocess.call(['kdestroy'])
 
 
     def get_facts_puppetdb(self, apiurl, facts, hostgroup):
@@ -49,7 +49,7 @@ class PuppetDBNodes(object):
             return None
 
 
-    def print_puppetdb_nodes(self, apiurl, hostgroup, factlist):
+    def print_puppetdb_nodes(self, apiurl, hostgroup, sshuser, factlist):
         '''
         Queries PuppetDB and prints out the nodes information in a supported format for Rundeck
 .
@@ -66,17 +66,17 @@ class PuppetDBNodes(object):
             for node in data.keys():
                 print ('%s:'%node)
                 print (" "*4 + "hostname: " + node)
-                print (" "*4 + "username: root")
+                print (" "*4 + "username: " + sshuser)
                 for fact in factlist:
                     if data[node].has_key(fact):
                         print (" "*4 + fact + ": " + data[node][fact] )
             logging.info("Node list printed successfully")
 
         else:
-            logging.error("Fact list empty. Check PuppetDB connection params")
+            logging.error('Fact list empty. Check PuppetDB connection params')
 
 
-    def store_puppetdb_nodes(self, apiurl, hostgroup, factlist, filename):
+    def store_puppetdb_nodes(self, apiurl, hostgroup, sshuser, factlist, filename):
         '''
         Instead of querying PuppetDB every time, saves the list of nodes on a local file
         so Rundeck can access it localy.
@@ -95,21 +95,24 @@ class PuppetDBNodes(object):
                 for node in data.keys():
                     file.write('%s:\n'%node)
                     file.write(" "*4 + "hostname: " + node + '\n')
-                    file.write(" "*4 + "username: root" + '\n')
+                    file.write(" "*4 + "username: " + sshuser +'\n')
                     for fact in factlist:
                         if data[node].has_key(fact):
                             file.write(" "*4 + fact + ": " + data[node][fact] + '\n')
-            logging.info("Node list saved successfully")
+            logging.info('Node list saved successfully')
+
+            # trick to avoid Rundeck complain when no output is printed out
+            print ""
         else:
-            logging.error("Fact list empty. Check PuppetDB connection params")
+            logging.error('Fact list empty. Check PuppetDB connection params')
 
 
     def run(self):
-        self.negociate_krb_ticket(self.keytab, self.username)
+        self.negociate_krb_ticket(self.keytab, self.krbuser)
         if self.store:
-            self.store_puppetdb_nodes(self.apiurl, self.hostgroup, self.factlist, self.file)
+            self.store_puppetdb_nodes(self.apiurl, self.hostgroup, self.sshuser, self.factlist, self.file)
         else:
-            self.print_puppetdb_nodes(self.apiurl, self.hostgroup, self.factlist)
+            self.print_puppetdb_nodes(self.apiurl, self.hostgroup, self.sshuser, self.factlist)
 
 
 def main():
@@ -119,14 +122,15 @@ def main():
  
     parser.add_argument("--apiurl", help="PuppetDB API url (https://<SERVER>:<PORT>/<API VERSION>)", required=True)
     parser.add_argument("--hostgroup", help="Foreman hostgroup", required=True)
-    parser.add_argument("--keytab", help="Keytab", required=True)
-    parser.add_argument("--username", help="Username to connect to PuppetDB", required=True)
-    parser.add_argument("--factlist", nargs='*', default=[], help="List of facts to retrieve for every node")
+    parser.add_argument("--keytab", help="Absolute path to kerberos principals keytab (used to authenticate & connect to PuppetDB)", required=True)
+    parser.add_argument("--krbuser", help="Kerberos principal (used alongside 'keytab' to connect to PuppetDB)", required=True)
+    parser.add_argument("--sshuser", default="root", help="User Rundeck will use to connect to hosts via SSH", required=True)
+    parser.add_argument("--factlist", nargs="*", default=[], help="List of facts to retrieve for every node")
     parser.add_argument("--file", default="/tmp/nodes.yaml", help="File path where the node list info will be stored")
 
     behaviour = parser.add_mutually_exclusive_group()
-    behaviour.add_argument('--store', action='store_true')
-    behaviour.add_argument('--print', action='store_false')
+    behaviour.add_argument("--store", action="store_true")
+    behaviour.add_argument("--print", action="store_false")
 
     args = parser.parse_args()
 
