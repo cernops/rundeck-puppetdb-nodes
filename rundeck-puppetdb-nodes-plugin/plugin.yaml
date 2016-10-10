@@ -8,44 +8,52 @@ date: 2016/02/25
 providers:
         - name: rundeck-puppetdb-nodes
           service: ResourceModelSource
-          title: PuppetDB source
+          title: "PuppetDB source"
           description: Queries PuppetDB to retrieve node definitions from a specific Foreman hostgroup
           resource-format: resourceyaml
           plugin-type: script
           script-interpreter: /usr/bin/python
           script-file: rundeck_puppetdb_nodes.py
-          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --username ${config.username} --keytab ${config.keytab} --file ${config.file} --${config.mode} --factlist ${config.factlist}"
+          script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --krbuser ${config.krbuser} --keytab ${config.keytab}
+                       --sshuser ${config.sshuser} --file ${config.file} --${config.mode} --factlist ${config.factlist}"
           config:
                 - name: apiurl
                   type: String
-                  title: PuppetDB
+                  title: "PuppetDB"
                   description: "PuppetDB API URL. Ex: https://my.puppet.db:2525/v3"
-                  default: "https://judy.cern.ch:9081/v3"
+                  default: "https://constable.cern.ch:9081/v3"
                   required: true
                 - name: hostgroup
                   type: String
-                  title: Hostgroup
+                  title: "Hostgroup"
                   description: "Foreman Hostgroup"
-                  required: true
-                - name: username
-                  type: String
-                  title: Username
-                  description: "User to connect to PuppetDB"
-                  required: true
-                - name: keytab
-                  type: String
-                  title: Keytab
-                  description: "Path to user's keytab to authenticate"
                   required: true
                 - name: factlist
                   type: String
-                  title: Fact list
+                  title: "Fact list"
                   description: "Space-separated list of facts to retrieve for every node"
                   default: "hostname ipaddress"
                   required: false
+                - name: krbuser
+                  type: String
+                  title: "Kerberos User"
+                  description: "Kerberos principal (used alongside 'keytab' to connect to PuppetDB)"
+                  required: true
+                - name: keytab
+                  type: String
+                  title: "Kerberos Keytab Path"
+                  description: "Absolute path to kerberos principal's keytab (used to authenticate & connect to PuppetDB)"
+                  default: "/etc/rundeck/{YOUR_KEYTAB}.keytab"
+                  required: true
+                - name: sshuser
+                  type: String
+                  title: "SSH User"
+                  description: "User Rundeck will use to connect to hosts via SSH"
+                  default: "root"
+                  required: true
                 - name: mode
                   type: Select
-                  title: Mode
+                  title: "Executon Mode"
                   description: "Prints out/stores on file the list of nodes"
                   default: print
                   values: print,store
