@@ -4,7 +4,7 @@ Rundeck PuppetDB Nodes Plugin
 Description
 -----------
 This is a Resource Model Source plugin for [Rundeck][] Rundeck version 2.0 (or higher) that retrieves node definitions
-from PuppetDB. 
+from PuppetDB.
 
 Developed in Python, it uses [python-requests][] library and Kerberos authentication to connect to the PuppetDB API.
 
@@ -15,7 +15,7 @@ Either the puppetdb API url, the foreman hostgroup, username, and the kerberos k
 
 Parameters
 ----------
-`PuppetDB` - PuppetDB API URL following this format: `https://<SERVER>:<PORT>/<API VERSION>` 
+`PuppetDB` - PuppetDB API URL following this format: `https://<SERVER>:<PORT>/<API VERSION>`
 
  > `https://my.puppet.db:2525/v3`
 
@@ -23,13 +23,15 @@ Parameters
 
  > `cloud_workflow` or `cloud_`
 
-`Kerberos user` - User to connect to PuppetDB
-
-`Kerberos keytab` - Path to user's keytab to authenticate
-
 `Factlist` - Space-separated list of facts to retrieve for every node
 
-`Mode` - Prints out/stores on file the list of nodes. Select store if you want to cache the result.
+`Kerberos user` - Kerberos principal (used alongside 'keytab' to connect to PuppetDB)
+
+`Kerberos keytab` - Absolute path to kerberos principal's keytab (used to authenticate & connect to PuppetDB)
+
+`SSH User` - User Rundeck will use to connect to hosts via SSH
+
+`Execution Mode` - Prints out/stores on file the list of nodes. Select store if you want to cache the result
 
 `Output file` - Save list of nodes to file (only if 'store' mode selected)
 

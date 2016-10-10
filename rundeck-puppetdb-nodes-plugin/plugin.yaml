@@ -1,10 +1,10 @@
 #yaml plugin metadata
 
 name: PuppetDB source
-version: 1.2
+version: 1.3
 rundeckPluginVersion: 1.0
 author: Daniel Fernandez (danielfr@cern.ch)
-date: 2016/02/25
+date: 2016/10/10
 providers:
         - name: rundeck-puppetdb-nodes
           service: ResourceModelSource
