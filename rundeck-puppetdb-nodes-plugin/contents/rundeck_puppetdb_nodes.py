@@ -31,7 +31,10 @@ class PuppetDBNodes(object):
 
     def get_facts_puppetdb(self, apiurl, facts, hostgroup):
         url ='%s/facts' % apiurl
-        query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select-facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
+        if 'v3' in apiurl:
+            query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select-facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
+        else:
+            query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select_facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
         query_facts = ','.join(['["=","name","%s"]' % fact for fact in facts])
         query = query_base % (query_facts, hostgroup)
 
