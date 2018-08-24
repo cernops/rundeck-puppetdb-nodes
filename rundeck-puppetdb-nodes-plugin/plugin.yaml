@@ -21,7 +21,7 @@ providers:
                   type: String
                   title: "PuppetDB"
                   description: "PuppetDB API URL. Ex: https://my.puppet.db:2525/v3"
-                  default: "https://constable.cern.ch:9081/v3"
+                  default: "https://constable.cern.ch:9081/pdb/query/v4"
                   required: true
                 - name: hostgroup
                   type: String
