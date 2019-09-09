@@ -72,7 +72,7 @@ class PuppetDBNodes(object):
                 print (" "*4 + "username: " + sshuser)
                 for fact in factlist:
                     if data[node].has_key(fact):
-                        print (" "*4 + fact + ": " + data[node][fact] )
+                        print (" "*4 + fact + ": " + str(data[node][fact]) )
             logging.info("Node list printed successfully")
 
         else:
@@ -101,7 +101,7 @@ class PuppetDBNodes(object):
                     file.write(" "*4 + "username: " + sshuser +'\n')
                     for fact in factlist:
                         if data[node].has_key(fact):
-                            file.write(" "*4 + fact + ": " + data[node][fact] + '\n')
+                            file.write(" "*4 + fact + ": " + str(data[node][fact]) + '\n')
             logging.info('Node list saved successfully')
 
             # trick to avoid Rundeck complain when no output is printed out
