@@ -122,7 +122,7 @@ def main():
     parser = ArgumentParser(description="Populate Rundeck list of nodes from PuppetDB")
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     parser.add_argument("-d", "--debug", help="increase output to debug messages", action="store_true")
- 
+
     parser.add_argument("--apiurl", help="PuppetDB API url (https://<SERVER>:<PORT>/<API VERSION>)", required=True)
     parser.add_argument("--hostgroup", help="Foreman hostgroup", required=True)
     parser.add_argument("--keytab", help="Absolute path to kerberos principals keytab (used to authenticate & connect to PuppetDB)", required=True)
