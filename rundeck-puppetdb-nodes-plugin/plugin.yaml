@@ -3,7 +3,7 @@
 name: PuppetDB source
 version: 1.4.2
 rundeckPluginVersion: 1.0
-author: Daniel Fernandez (daniel.fernandez@cern.ch), David Moreno Garcia (david.mogar@cern.ch), Philippe Ganz (philippe.ganz@cern.ch), Nacho Barrientos Arias (nacho.barrientos@cern.ch), Ignacio Coterillo Coz (ignacio.coterillo.coz@cern.ch)
+author: Daniel Fernandez, David Moreno Garcia, Philippe Ganz, Nacho Barrientos Arias (nacho.barrientos@cern.ch), Ignacio Coterillo Coz (ignacio.coterillo.coz@cern.ch)
 date: 2021/08/04
 providers:
         - name: rundeck-puppetdb-nodes
