@@ -1,10 +1,10 @@
 #yaml plugin metadata
 
 name: PuppetDB source
-version: 1.4.2
+version: 2.0.0
 rundeckPluginVersion: 1.0
-author: Daniel Fernandez (daniel.fernandez@cern.ch), David Moreno Garcia (david.mogar@cern.ch), Philippe Ganz (philippe.ganz@cern.ch), Nacho Barrientos Arias (nacho.barrientos@cern.ch)
-date: 2019/09/09
+author: Daniel Fernandez, David Moreno Garcia, Philippe Ganz, Nacho Barrientos Arias (nacho.barrientos@cern.ch), Ignacio Coterillo Coz (ignacio.coterillo.coz@cern.ch)
+date: 2021/08/04
 providers:
         - name: rundeck-puppetdb-nodes
           service: ResourceModelSource
@@ -12,7 +12,7 @@ providers:
           description: Queries PuppetDB to retrieve node definitions from a specific Foreman hostgroup
           resource-format: resourceyaml
           plugin-type: script
-          script-interpreter: /usr/bin/python
+          script-interpreter: /usr/bin/python3
           script-file: rundeck_puppetdb_nodes.py
           script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --krbuser ${config.krbuser} --keytab ${config.keytab}
                        --sshuser ${config.sshuser} --file ${config.file} --${config.mode} --factlist ${config.factlist}"

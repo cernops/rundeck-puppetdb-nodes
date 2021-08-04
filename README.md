@@ -39,6 +39,7 @@ Parameters
 Requirements
 ------------
 * The plugin requires Rundeck version 2.0 or higher.
+* Python 3.
 * python-requests v1.1.0-4 or higher
 * python-requests-kerberos v0.5 ([important!!](https://bugzilla.redhat.com/show_bug.cgi?id=1169296)) or higher
 

@@ -1,5 +1,3 @@
-# Daniel Fernandez Rodriguez <danielfr@cern.ch>
-
 from argparse import ArgumentParser
 from collections import defaultdict
 from requests_kerberos import HTTPKerberosAuth
@@ -11,7 +9,7 @@ import logging
 import sys
 
 
-class PuppetDBNodes(object):
+class PuppetDBNodes():
 
     def __init__(self, args):
         for k, v in args.items():
@@ -41,15 +39,16 @@ class PuppetDBNodes(object):
         headers = {'Content-Type': 'application/json','Accept': 'application/json, version=2'}
         payload = {'query': query}
 
-        logging.info("Getting facts from '%s', query: '%s'" % (url, query))
+        logging.info("Getting facts from '%s', query: '%s'", url, query)
         r = requests.get(url, params=payload, headers=headers, auth=HTTPKerberosAuth())
 
+        # pylint: disable=no-member
         if r.status_code == requests.codes.ok:
-            logging.info("Request code: '%s'" % r.status_code)
+            logging.info("Request code: '%s'", r.status_code)
             return json.loads(r.text)
-        else:
-            logging.error("The request failed with code '%s'" % r.status_code)
-            return None
+
+        logging.error("The request failed with code '%s'", r.status_code)
+        return None
 
 
     def print_puppetdb_nodes(self, apiurl, hostgroup, sshuser, factlist):
@@ -63,16 +62,16 @@ class PuppetDBNodes(object):
 
         if raw_data != None:
             for entry in raw_data:
-                data[entry['certname']] = dict(data[entry['certname']].items() + [(entry['name'], entry['value'])])
+                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
 
             logging.info("Printing node list using standard output...")
             for node in data.keys():
-                print ('%s:'%node)
-                print (" "*4 + "hostname: " + node)
-                print (" "*4 + "username: " + sshuser)
+                print('%s:'%node)
+                print(" "*4 + "hostname: " + node)
+                print(" "*4 + "username: " + sshuser)
                 for fact in factlist:
-                    if data[node].has_key(fact):
-                        print (" "*4 + fact + ": " + str(data[node][fact]) )
+                    if fact in data[node]:
+                        print(" "*4 + fact + ": " + str(data[node][fact]) )
             logging.info("Node list printed successfully")
 
         else:
@@ -91,21 +90,21 @@ class PuppetDBNodes(object):
 
         if raw_data != None:
             for entry in raw_data:
-                data[entry['certname']] = dict(data[entry['certname']].items() + [(entry['name'], entry['value'])])
+                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
 
-            logging.info("Saving node list in '%s'..." % filename)
+            logging.info("Saving node list in '%s'...", filename)
             with open(filename, 'w') as file:
                 for node in data.keys():
                     file.write('%s:\n'%node)
                     file.write(" "*4 + "hostname: " + node + '\n')
                     file.write(" "*4 + "username: " + sshuser +'\n')
                     for fact in factlist:
-                        if data[node].has_key(fact):
+                        if fact in data[node]:
                             file.write(" "*4 + fact + ": " + str(data[node][fact]) + '\n')
             logging.info('Node list saved successfully')
 
             # trick to avoid Rundeck complain when no output is printed out
-            print ""
+            print("")
         else:
             logging.error('Fact list empty. Check PuppetDB connection params')
 
@@ -153,6 +152,6 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except Exception, e:
+    except Exception as e:
         logging.error(e)
         sys.exit(-1)
