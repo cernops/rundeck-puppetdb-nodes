@@ -41,15 +41,15 @@ class PuppetDBNodes():
         headers = {'Content-Type': 'application/json','Accept': 'application/json, version=2'}
         payload = {'query': query}
 
-        logging.info("Getting facts from '%s', query: '%s'" % (url, query))
+        logging.info("Getting facts from '%s', query: '%s'", url, query)
         r = requests.get(url, params=payload, headers=headers, auth=HTTPKerberosAuth())
 
         # pylint: disable=no-member
         if r.status_code == requests.codes.ok:
-            logging.info("Request code: '%s'" % r.status_code)
+            logging.info("Request code: '%s'", r.status_code)
             return json.loads(r.text)
         else:
-            logging.error("The request failed with code '%s'" % r.status_code)
+            logging.error("The request failed with code '%s'", r.status_code)
             return None
 
 
@@ -94,7 +94,7 @@ class PuppetDBNodes():
             for entry in raw_data:
                 data[entry['certname']] = dict(data[entry['certname']].items() + [(entry['name'], entry['value'])])
 
-            logging.info("Saving node list in '%s'..." % filename)
+            logging.info("Saving node list in '%s'...", filename)
             with open(filename, 'w') as file:
                 for node in data.keys():
                     file.write('%s:\n'%node)
