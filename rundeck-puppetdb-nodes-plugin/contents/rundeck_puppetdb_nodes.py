@@ -44,6 +44,7 @@ class PuppetDBNodes(object):
         logging.info("Getting facts from '%s', query: '%s'" % (url, query))
         r = requests.get(url, params=payload, headers=headers, auth=HTTPKerberosAuth())
 
+        # pylint: disable=no-member
         if r.status_code == requests.codes.ok:
             logging.info("Request code: '%s'" % r.status_code)
             return json.loads(r.text)
