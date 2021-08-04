@@ -100,7 +100,7 @@ class PuppetDBNodes(object):
                     file.write(" "*4 + "hostname: " + node + '\n')
                     file.write(" "*4 + "username: " + sshuser +'\n')
                     for fact in factlist:
-                        if data[node].has_key(fact):
+                        if fact in data[node]:
                             file.write(" "*4 + fact + ": " + str(data[node][fact]) + '\n')
             logging.info('Node list saved successfully')
 
