@@ -67,12 +67,12 @@ class PuppetDBNodes(object):
 
             logging.info("Printing node list using standard output...")
             for node in data.keys():
-                print ('%s:'%node)
-                print (" "*4 + "hostname: " + node)
-                print (" "*4 + "username: " + sshuser)
+                print('%s:'%node)
+                print(" "*4 + "hostname: " + node)
+                print(" "*4 + "username: " + sshuser)
                 for fact in factlist:
                     if data[node].has_key(fact):
-                        print (" "*4 + fact + ": " + str(data[node][fact]) )
+                        print(" "*4 + fact + ": " + str(data[node][fact]) )
             logging.info("Node list printed successfully")
 
         else:
