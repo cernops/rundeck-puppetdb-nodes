@@ -105,7 +105,7 @@ class PuppetDBNodes(object):
             logging.info('Node list saved successfully')
 
             # trick to avoid Rundeck complain when no output is printed out
-            print ""
+            print("")
         else:
             logging.error('Fact list empty. Check PuppetDB connection params')
 
