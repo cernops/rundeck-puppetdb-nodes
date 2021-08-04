@@ -12,7 +12,7 @@ providers:
           description: Queries PuppetDB to retrieve node definitions from a specific Foreman hostgroup
           resource-format: resourceyaml
           plugin-type: script
-          script-interpreter: /usr/bin/python
+          script-interpreter: /usr/bin/python3
           script-file: rundeck_puppetdb_nodes.py
           script-args: "-v --apiurl ${config.apiurl} --hostgroup ${config.hostgroup} --krbuser ${config.krbuser} --keytab ${config.keytab}
                        --sshuser ${config.sshuser} --file ${config.file} --${config.mode} --factlist ${config.factlist}"
