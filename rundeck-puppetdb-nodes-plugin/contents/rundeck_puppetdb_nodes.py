@@ -48,9 +48,9 @@ class PuppetDBNodes():
         if r.status_code == requests.codes.ok:
             logging.info("Request code: '%s'", r.status_code)
             return json.loads(r.text)
-        else:
-            logging.error("The request failed with code '%s'", r.status_code)
-            return None
+
+        logging.error("The request failed with code '%s'", r.status_code)
+        return None
 
 
     def print_puppetdb_nodes(self, apiurl, hostgroup, sshuser, factlist):
