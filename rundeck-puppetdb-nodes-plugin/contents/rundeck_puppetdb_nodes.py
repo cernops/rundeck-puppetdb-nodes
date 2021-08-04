@@ -1,5 +1,3 @@
-# Daniel Fernandez Rodriguez <danielfr@cern.ch>
-
 from argparse import ArgumentParser
 from collections import defaultdict
 from requests_kerberos import HTTPKerberosAuth
