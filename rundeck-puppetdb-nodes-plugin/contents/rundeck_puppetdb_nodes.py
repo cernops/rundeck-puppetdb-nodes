@@ -64,7 +64,7 @@ class PuppetDBNodes():
 
         if raw_data != None:
             for entry in raw_data:
-                data[entry['certname']] = dict(data[entry['certname']].items() + [(entry['name'], entry['value'])])
+                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
 
             logging.info("Printing node list using standard output...")
             for node in data.keys():
@@ -92,7 +92,7 @@ class PuppetDBNodes():
 
         if raw_data != None:
             for entry in raw_data:
-                data[entry['certname']] = dict(data[entry['certname']].items() + [(entry['name'], entry['value'])])
+                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
 
             logging.info("Saving node list in '%s'...", filename)
             with open(filename, 'w') as file:
