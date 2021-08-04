@@ -11,7 +11,7 @@ import logging
 import sys
 
 
-class PuppetDBNodes(object):
+class PuppetDBNodes():
 
     def __init__(self, args):
         for k, v in args.items():
