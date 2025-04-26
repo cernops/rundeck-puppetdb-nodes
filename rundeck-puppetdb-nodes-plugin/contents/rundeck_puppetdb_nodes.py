@@ -36,7 +36,11 @@ class PuppetDBNodes():
         query_facts = ','.join(['["=","name","%s"]' % fact for fact in facts])
         query = query_base % (query_facts, hostgroup)
 
-        headers = {'Content-Type': 'application/json','Accept': 'application/json, version=2'}
+        headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, version=2',
+                'User-Agent': 'rundeck_puppetdb_nodes/2.1.0'
+                }
         payload = {'query': query}
 
         logging.info("Getting facts from '%s', query: '%s'", url, query)
