@@ -26,20 +26,17 @@ class PuppetDBNodes():
     def destroy_krb_ticket(self):
         subprocess.call(['kdestroy'])
 
+    def get_inventory_puppetdb(self, apiurl, facts, hostgroup):
+        url ='{}/inventory'.format(apiurl)
+        default_fields = ['"certname"','"environment"']
+        facts = ['"facts.{}"'.format(fact) for fact in facts]
+        
+        all_fields = '[' + ','.join(default_fields+facts) + ']'
+        hostgroup_filter = '["~", "facts.hostgroup", "{}"]'.format(hostgroup)
 
-    def get_facts_puppetdb(self, apiurl, facts, hostgroup):
-        url ='%s/facts' % apiurl
-        if 'v3' in apiurl:
-            query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select-facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
-        else:
-            query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select_facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
-        query_facts = ','.join(['["=","name","%s"]' % fact for fact in facts])
-        query = query_base % (query_facts, hostgroup)
-
+        query = '["extract", {fields}, {filter}]'.format(fields=all_fields,filter=hostgroup_filter)
         headers = {'Content-Type': 'application/json','Accept': 'application/json, version=2'}
         payload = {'query': query}
-
-        logging.info("Getting facts from '%s', query: '%s'", url, query)
         r = requests.get(url, params=payload, headers=headers, auth=HTTPKerberosAuth())
 
         # pylint: disable=no-member
@@ -50,19 +47,18 @@ class PuppetDBNodes():
         logging.error("The request failed with code '%s'", r.status_code)
         return None
 
-
     def print_puppetdb_nodes(self, apiurl, hostgroup, sshuser, factlist):
         '''
         Queries PuppetDB and prints out the nodes information in a supported format for Rundeck
 .
         '''
         factlist.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
-        raw_data = self.get_facts_puppetdb(apiurl, factlist, hostgroup)
+        raw_data = self.get_inventory_puppetdb(apiurl,factlist,hostgroup)
         data = defaultdict(lambda: {})
 
         if raw_data != None:
             for entry in raw_data:
-                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
+                data[entry['certname']] = { k.removeprefix("facts."):v for k,v in entry.items() }
 
             logging.info("Printing node list using standard output...")
             for node in data.keys():
@@ -77,7 +73,6 @@ class PuppetDBNodes():
         else:
             logging.error('Fact list empty. Check PuppetDB connection params')
 
-
     def store_puppetdb_nodes(self, apiurl, hostgroup, sshuser, factlist, filename):
         '''
         Instead of querying PuppetDB every time, saves the list of nodes on a local file
@@ -85,13 +80,12 @@ class PuppetDBNodes():
 
         '''
         factlist.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
-        raw_data = self.get_facts_puppetdb(apiurl, factlist, hostgroup)
+        raw_data = self.get_inventory_puppetdb(apiurl, factlist, hostgroup)
         data = defaultdict(lambda: {})
 
         if raw_data != None:
             for entry in raw_data:
-                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
-
+                data[entry['certname']] = { k.removeprefix("facts"):v for k,v in entry.items() }
             logging.info("Saving node list in '%s'...", filename)
             with open(filename, 'w') as file:
                 for node in data.keys():
@@ -107,7 +101,6 @@ class PuppetDBNodes():
             print("")
         else:
             logging.error('Fact list empty. Check PuppetDB connection params')
-
 
     def run(self):
         self.negociate_krb_ticket(self.keytab, self.krbuser)
