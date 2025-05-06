@@ -28,23 +28,24 @@ class PuppetDBNodes():
 
 
     def get_facts_puppetdb(self, apiurl, facts, hostgroup):
-        url ='%s/facts' % apiurl
-        if 'v3' in apiurl:
-            query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select-facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
-        else:
-            query_base = '["and",["or",%s],["in", "certname", ["extract", "certname", ["select_facts", ["and", ["=", "name", "hostgroup"], ["~", "value", "%s"]]]]]]'
-        query_facts = ','.join(['["=","name","%s"]' % fact for fact in facts])
-        query = query_base % (query_facts, hostgroup)
+
+        query_facts = ','.join(['facts.%s' % fact for fact in facts])
+
+        # Strip / to cover cases of where hostgroup has been set to "top/"
+        hostgroup_parts = hostgroup.rstrip('/').split('/')
+        hostgroup_filter = ' and '.join([f'facts.hostgroup_{i} = "{part}"' for i, part in enumerate(hostgroup_parts)])
+
+        query = 'inventory[certname,%s]{%s}' % (query_facts, hostgroup_filter)
 
         headers = {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json, version=2',
-                'User-Agent': 'rundeck_puppetdb_nodes/2.1.0'
+                'User-Agent': 'rundeck_puppetdb_nodes/3.0.0'
                 }
         payload = {'query': query}
 
-        logging.info("Getting facts from '%s', query: '%s'", url, query)
-        r = requests.get(url, params=payload, headers=headers, auth=HTTPKerberosAuth())
+        logging.info("Getting facts from '%s', query: '%s'", apiurl, query)
+        r = requests.get(apiurl, params=payload, headers=headers, auth=HTTPKerberosAuth())
 
         # pylint: disable=no-member
         if r.status_code == requests.codes.ok:
@@ -65,17 +66,16 @@ class PuppetDBNodes():
         data = defaultdict(lambda: {})
 
         if raw_data != None:
-            for entry in raw_data:
-                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
-
             logging.info("Printing node list using standard output...")
-            for node in data.keys():
-                print('%s:'%node)
-                print(" "*4 + "hostname: " + node)
+            for entry in raw_data:
+                print('%s:' % entry['certname'])
+                print(" "*4 + "hostname: " + entry['certname'])
                 print(" "*4 + "username: " + sshuser)
                 for fact in factlist:
-                    if fact in data[node]:
-                        print(" "*4 + fact + ": " + str(data[node][fact]) )
+                    factkey = "facts.%s" % fact
+                    if factkey in entry:
+                        print(" "*4 + factkey + ": " + str(entry[factkey]))
+
             logging.info("Node list printed successfully")
 
         else:
@@ -90,21 +90,18 @@ class PuppetDBNodes():
         '''
         factlist.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
         raw_data = self.get_facts_puppetdb(apiurl, factlist, hostgroup)
-        data = defaultdict(lambda: {})
 
         if raw_data != None:
-            for entry in raw_data:
-                data[entry['certname']] = dict(list(data[entry['certname']].items()) + [(entry['name'], entry['value'])])
-
             logging.info("Saving node list in '%s'...", filename)
             with open(filename, 'w') as file:
-                for node in data.keys():
-                    file.write('%s:\n'%node)
-                    file.write(" "*4 + "hostname: " + node + '\n')
-                    file.write(" "*4 + "username: " + sshuser +'\n')
+                for entry in raw_data:
+                    file.write('%s:' % entry['certname'] + '\n')
+                    file.write(" "*4 + "hostname: " + entry['certname'] + '\n')
+                    file.write(" "*4 + "username: " + sshuser + '\n')
                     for fact in factlist:
-                        if fact in data[node]:
-                            file.write(" "*4 + fact + ": " + str(data[node][fact]) + '\n')
+                        factkey = "facts.%s" % fact
+                        if factkey in entry:
+                            file.write(" "*4 + factkey + ": " + str(entry[factkey]) + '\n')
             logging.info('Node list saved successfully')
 
             # trick to avoid Rundeck complain when no output is printed out
