@@ -109,11 +109,11 @@ class PuppetDBNodes():
                         if factkey in entry:
                             file.write(" "*4 + fact + ": " + str(entry[factkey]) + '\n')
                             file.write(" "*4 + factkey + ": " + str(entry[factkey]) + '\n')
-                # legacy facts
-                file.write(" "*4 + "facts.operatingsystem" + ": " + str(entry["facts.os.name"]))
-                file.write(" "*4 + "operatingsystem" + ": " + str(entry["facts.os.name"]))
-                file.write(" "*4 + "facts.operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]))
-                file.write(" "*4 + "operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]))
+                    # legacy facts
+                    file.write(" "*4 + "facts.operatingsystem" + ": " + str(entry["facts.os.name"]) + '\n')
+                    file.write(" "*4 + "operatingsystem" + ": " + str(entry["facts.os.name"]) + '\n')
+                    file.write(" "*4 + "facts.operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]) + '\n')
+                    file.write(" "*4 + "operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]) + '\n')
 
             logging.info('Node list saved successfully')
 
