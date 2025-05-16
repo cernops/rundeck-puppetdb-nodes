@@ -49,57 +49,54 @@ Download the latest .ZIP from the [releases page](https://github.com/cernops/run
 
 Next time you log in, you will see a new Resource Model Source called **PuppetDB Source** on the project's configuration page.
 
+Running Plugin Manually
+-----------------------
+
+```bash
+python3 rundeck_puppetdb_nodes.py --verbose --apiurl https://pdb.example.ch:9081/pdb/query/v4 \
+    --hostgroup one/two\
+    --krbuser $USER --sshuser $USER \
+    --keytab /tmp/foo \
+    --store --file /tmp/foo.yaml
+```
+
+or
+
+```bash
+python3 rundeck_puppetdb_nodes.py --verbose --apiurl https://pdb.example.ch:9081/pdb/query/v4 \
+    --hostgroup one/two\
+    --krbuser $USER --sshuser $USER \
+    --keytab /tmp/foo \
+```
+
 Plugin Output example
 ---------------------
-```
-scheduler-02.mydomain.com:
-    hostname: scheduler-02.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/scheduler/server
-    osName: SLC
-scheduler-01.mydomain.com:
-    hostname: scheduler-01.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/scheduler/server
-    osName: SLC
-loadbalancer-01.mydomain.com:
-    hostname: loadbalancer-01.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/ha
-    osName: SLC
-server-02.mydomain.com:
-    hostname: server-02.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/server/production
-    osName: SLC
-loadbalancer-02.mydomain.com:
-    hostname: loadbalancer-02.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/ha
-    osName: SLC
-server-qa-01.mydomain.com:
-    hostname: server-qa-01.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/server/qa
-    osName: SLC
-loadbalancer-qa-01.mydomain.com:
-    hostname: loadbalancer-qa-01.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/ha
-    osName: SLC
-server-qa-03.mydomain.com:
-    hostname: server-qa-03.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/server
-    osName: CentOS
-server-datastore.mydomain.com:
-    hostname: server-datastore.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/datastore
-    osName: CentOS
-server-qa-02.mydomain.com:
-    hostname: server-qa-02.mydomain.com
-    username: root
-    tags:  hostgroup=workflows/server
-    osName: SLC
+
+```yaml
+nodeA.example.ch:
+    hostname: nodeA.example.ch
+    username: fred
+    os.name: RedHat
+    facts.os.name: RedHat
+    os.release.full: 9.5
+    facts.os.release.full: 9.5
+    hostgroup: one/two/login
+    facts.hostgroup: one/two/login
+    facts.operatingsystem: RedHat
+    operatingsystem: RedHat
+    facts.operatingsystemrelease: 9.5
+    operatingsystemrelease: 9.5
+nodeB.example.ch:
+    hostname: nodeB.example.ch
+    username: straylen
+    os.name: RedHat
+    facts.os.name: RedHat
+    os.release.full: 9.5
+    facts.os.release.full: 9.5
+    hostgroup: one/two/login
+    facts.hostgroup: one/two/login
+    facts.operatingsystem: RedHat
+    operatingsystem: RedHat
+    facts.operatingsystemrelease: 9.5
+    operatingsystemrelease: 9.5
 ```
