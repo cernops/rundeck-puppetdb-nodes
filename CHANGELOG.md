@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+
+## [v3.1.0](https://github.com/cernops/rundeck-puppetdb-nodes/tree/v3.1.0)
 - Expose both "fact" and "facts.fact" as keys.
 - Use non legacy facts in query
 - Maintain old legacy facts "operatingsystem" and "operatingsystemrelease"

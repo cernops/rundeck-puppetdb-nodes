@@ -40,7 +40,7 @@ class PuppetDBNodes():
         headers = {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json, version=2',
-                'User-Agent': 'rundeck_puppetdb_nodes/3.0.0'
+                'User-Agent': 'rundeck_puppetdb_nodes/3.1.0'
                 }
         payload = {'query': query}
 
