@@ -61,7 +61,7 @@ class PuppetDBNodes():
         Queries PuppetDB and prints out the nodes information in a supported format for Rundeck
 .
         '''
-        factlist.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
+        factlist.extend(["os.name", "os.release.full", "hostgroup"])
         raw_data = self.get_facts_puppetdb(apiurl, factlist, hostgroup)
         data = defaultdict(lambda: {})
 
@@ -74,7 +74,13 @@ class PuppetDBNodes():
                 for fact in factlist:
                     factkey = "facts.%s" % fact
                     if factkey in entry:
+                        print(" "*4 + fact + ": " + str(entry[factkey]))
                         print(" "*4 + factkey + ": " + str(entry[factkey]))
+                # legacy facts
+                print(" "*4 + "facts.operatingsystem" + ": " + str(entry["facts.os.name"]))
+                print(" "*4 + "operatingsystem" + ": " + str(entry["facts.os.name"]))
+                print(" "*4 + "facts.operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]))
+                print(" "*4 + "operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]))
 
             logging.info("Node list printed successfully")
 
@@ -88,7 +94,7 @@ class PuppetDBNodes():
         so Rundeck can access it localy.
 
         '''
-        factlist.extend(["operatingsystem", "operatingsystemrelease", "hostgroup"])
+        factlist.extend(["os.name", "os.release.full", "hostgroup"])
         raw_data = self.get_facts_puppetdb(apiurl, factlist, hostgroup)
 
         if raw_data != None:
@@ -101,7 +107,14 @@ class PuppetDBNodes():
                     for fact in factlist:
                         factkey = "facts.%s" % fact
                         if factkey in entry:
+                            file.write(" "*4 + fact + ": " + str(entry[factkey]) + '\n')
                             file.write(" "*4 + factkey + ": " + str(entry[factkey]) + '\n')
+                # legacy facts
+                file.write(" "*4 + "facts.operatingsystem" + ": " + str(entry["facts.os.name"]))
+                file.write(" "*4 + "operatingsystem" + ": " + str(entry["facts.os.name"]))
+                file.write(" "*4 + "facts.operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]))
+                file.write(" "*4 + "operatingsystemrelease" + ": " + str(entry["facts.os.release.full"]))
+
             logging.info('Node list saved successfully')
 
             # trick to avoid Rundeck complain when no output is printed out
