@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+
+## [v3.1.1](https://github.com/cernops/rundeck-puppetdb-nodes/tree/v3.1.1)
 - The stored output in 3.1.0 was incorrect with some line breaks missing.
 
 ## [v3.1.0](https://github.com/cernops/rundeck-puppetdb-nodes/tree/v3.1.0)
